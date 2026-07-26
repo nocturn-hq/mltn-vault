@@ -142,6 +142,10 @@
     <link id="fa-cdn-fallback" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script>(function(){function loadCDN(){if(document.getElementById('fa-cdn-fallback'))return;var l=document.createElement('link');l.id='fa-cdn-fallback';l.rel='stylesheet';l.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';l.crossOrigin='anonymous';l.referrerPolicy='no-referrer';document.head.appendChild(l);}function isLoaded(){if(window.FontAwesome)return true;if(document.querySelector('svg.svg-inline--fa'))return true;try{var i=document.createElement('i');i.className='fa-solid fa-circle';i.style.position='absolute';i.style.visibility='hidden';document.body.appendChild(i);var ff=window.getComputedStyle(i).getPropertyValue('font-family')||'';var loaded=ff.toLowerCase().indexOf('fontawesome')!==-1||i.offsetWidth>0;document.body.removeChild(i);return loaded}catch(e){return false}}if(!isLoaded()){setTimeout(function(){if(!isLoaded())loadCDN();},1000);window.addEventListener('load',function(){if(!isLoaded())loadCDN();});}})();</script>
     <link rel="icon" href="src/assets/logo.png">
+    <!-- Visual refresh: type pairing -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -446,6 +450,116 @@
         .delay-scratch {
             animation-delay: 0.4s;
             background: rgba(229, 9, 20, 0.8);
+        }
+    </style>
+
+    <!-- ================= VISUAL REFRESH (styling only — no ids, classes, or scripts touched) ================= -->
+    <style id="visual-refresh">
+        :root {
+            --accent-ember: #F5A742;
+            --accent-violet-deep: #4C1D95;
+            --glass-border: rgba(139, 92, 246, 0.22);
+        }
+
+        body, input, textarea, select, button {
+            font-family: 'Manrope', -apple-system, sans-serif;
+        }
+
+        h1, h2, h3,
+        footer h3, footer h4,
+        #hero-title, #modalTitle {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.015em;
+        }
+
+        /* Navbar: richer glass + soft violet edge */
+        .navbar-glass {
+            background: linear-gradient(180deg, rgba(8,6,16,0.88), rgba(8,6,16,0.5)) !important;
+            backdrop-filter: blur(18px) saturate(160%) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+            border-bottom: 1px solid var(--glass-border) !important;
+            transition: background 0.4s ease, box-shadow 0.4s ease;
+        }
+        .navbar-glass.scrolled {
+            background: rgba(5,4,10,0.94) !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Hero title: subtle gradient text instead of flat white */
+        #hero-title {
+            background: linear-gradient(115deg, #ffffff 0%, #e4d6ff 45%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Ambient signature glow behind the hero — pure CSS, no extra markup */
+        .backdrop-container {
+            position: relative;
+        }
+        .backdrop-container::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(55% 45% at 12% 88%, rgba(124,58,237,0.32), transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Buttons: slightly more tactile */
+        .netflix-button {
+            border-radius: 6px;
+            letter-spacing: 0.01em;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+        }
+        #hero-play-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(255,255,255,0.18); }
+        #hero-info-btn:hover { transform: translateY(-2px); }
+        #modalPlayBtn:hover, #modalAddToListBtn:hover { transform: translateY(-2px); }
+
+        /* Cards: soft violet edge + lift on hover, layered on your existing rule */
+        .movie-card, .series-card, .anime-card {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid transparent;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .movie-card:hover, .series-card:hover, .anime-card:hover {
+            border-color: rgba(139, 92, 246, 0.45);
+            box-shadow: 0 22px 45px rgba(0,0,0,0.85), 0 0 26px rgba(124,58,237,0.28);
+            transform: translateY(-4px) scale(1.015);
+        }
+
+        /* Section icons: faint glow to tie to the accent */
+        section h2 i { filter: drop-shadow(0 0 6px rgba(124,58,237,0.45)); }
+
+        /* Footer: quiet divider */
+        footer { border-top: 1px solid rgba(255,255,255,0.06); }
+
+        /* Auth modal: richer surface + accent submit button */
+        #authModal .bg-neutral-900 {
+            background: linear-gradient(160deg, rgba(20,16,30,0.98), rgba(8,6,12,0.98)) !important;
+            border: 1px solid var(--glass-border) !important;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(124,58,237,0.14);
+        }
+        #authSubmitBtn {
+            background: linear-gradient(135deg, #7C3AED, var(--accent-violet-deep)) !important;
+            box-shadow: 0 8px 22px rgba(124,58,237,0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        #authSubmitBtn:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(124,58,237,0.45); }
+
+        /* Keyboard accessibility */
+        a:focus-visible, button:focus-visible, input:focus-visible {
+            outline: 2px solid var(--accent-ember);
+            outline-offset: 2px;
+        }
+
+        /* Respect reduced-motion preference for the decorative animations */
+        @media (prefers-reduced-motion: reduce) {
+            .animate-heartbeat, .animate-shake, .animate-zoom, .scratch-line,
+            .smooth-text-glow, .smooth-logo-glow {
+                animation-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
