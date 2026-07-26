@@ -10,7 +10,300 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="mobile-web-app-capable" content="yes">
     
+    <!-- Firebase SDKs --><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <meta name="supported-color-schemes" content="light">
+    <meta name="theme-color" content="#000000">
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    
     <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- Anti-Forced Dark Mode Script -->
+    <script>
+        (function() {
+            'use strict';
+            let forcedDarkDetected = false;
+            
+            function detectForcedDarkMode() {
+                const testDiv = document.createElement('div');
+                testDiv.style.cssText = `
+                    position: fixed !important;
+                    top: -1000px !important;
+                    left: -1000px !important;
+                    width: 1px !important;
+                    height: 1px !important;
+                    background-color: rgb(255, 255, 255) !important;
+                    color: rgb(0, 0, 0) !important;
+                    z-index: -9999 !important;
+                    pointer-events: none !important;
+                `;
+                document.documentElement.appendChild(testDiv);
+                
+                setTimeout(() => {
+                    const computed = window.getComputedStyle(testDiv);
+                    const bgColor = computed.backgroundColor;
+                    const textColor = computed.color;
+                    
+                    if (bgColor.includes('0, 0, 0') || bgColor.includes('rgb(0') || 
+                        textColor.includes('255, 255, 255') || textColor.includes('rgb(255')) {
+                        forcedDarkDetected = true;
+                        applyAntiForcedDarkMode();
+                    }
+                    testDiv.remove();
+                }, 100);
+            }
+            
+            function applyAntiForcedDarkMode() {
+                const style = document.createElement('style');
+                style.id = 'anti-forced-dark-mode';
+                style.textContent = `
+                    html {
+                        filter: invert(1) hue-rotate(180deg) !important;
+                        -webkit-filter: invert(1) hue-rotate(180deg) !important;
+                    }
+                    img, video, svg, picture, canvas,
+                    .logo, [class*="logo"], #logo,
+                    img[src*="logo"], img[alt*="logo"],
+                    img[src*="Logo"], img[alt*="Logo"] {
+                        filter: invert(1) hue-rotate(180deg) !important;
+                        -webkit-filter: invert(1) hue-rotate(180deg) !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', detectForcedDarkMode);
+            } else {
+                detectForcedDarkMode();
+            }
+        })();
+    </script>
+    
+    <title>MLTN VAULT - Discover Amazing Movies & TV Shows</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <link rel="stylesheet" href="netflix-style.css">
+    <link rel="stylesheet" href="search.css">
+    <link rel="stylesheet" href="toast.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://kit.fontawesome.com/22dc8d85a3.js" crossorigin="anonymous"></script>
+    <link id="fa-cdn-fallback" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" href="src/assets/logo.png">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'netflix-red': '#7C3AED',
+                        'netflix-black': '#000000',
+                        'netflix-dark': '#141414',
+                        'netflix-gray': '#333333',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body {
+            background-color: #000000 !important;
+            color: #ffffff;
+        }
+
+        /* Clean Ad Container Styles */
+        .ad-banner-slot {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 8px;
+            background: rgba(20, 20, 20, 0.7);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.12); }
+            35% { transform: scale(1); }
+            50% { transform: scale(1.18); }
+        }
+        .animate-heartbeat { animation: heartbeat 1.2s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-netflix-black text-white min-h-screen">
+
+    <!-- Anime Splash Intro Overlay -->
+    <div id="loadingScreen" class="fixed inset-0 bg-black z-[9999] flex flex-col items-center justify-center overflow-hidden">
+        <div id="animeLogoBox" class="flex flex-col items-center space-y-4 relative z-10 animate-heartbeat">
+            <img src="src/assets/logo.png" alt="MLTN VAULT Logo" class="w-28 h-28 lg:w-36 lg:h-36 object-contain">
+            <h1 class="text-3xl lg:text-4xl font-extrabold tracking-widest uppercase text-white">
+                <span class="text-red-600">MLTN</span> VAULT
+            </h1>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div id="mainContent">
+
+    <!-- Navigation -->
+    <header class="navbar-glass fixed top-0 w-full z-50 transition-all duration-500" id="navbar">
+        <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between px-4 lg:px-16 py-4 space-y-4 lg:space-y-0">
+            <div class="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-8 w-full lg:w-auto">
+                <h1 class="text-netflix-red text-2xl lg:text-3xl font-bold cursor-pointer hover:text-white transition-colors flex items-center" onclick="home()">
+                    <img src="src/assets/logo.png" alt="MLTN VAULT Logo" class="w-8 h-8 lg:w-10 lg:h-10 mr-2 object-contain">MLTN VAULT
+                </h1>
+                <nav class="hidden lg:flex space-x-6">
+                    <a href="#" class="text-white hover:text-gray-300 transition-colors">Home</a>
+                    <a href="#" class="text-white hover:text-gray-300 transition-colors" onclick="showDevToast('Movie List')">Movies</a>
+                    <a href="#" class="text-white hover:text-gray-300 transition-colors" onclick="showDevToast('TV Show List')">TV Shows</a>
+                    <a href="#" class="text-white hover:text-gray-300 transition-colors" onclick="showDevToast('My List')">My List</a>
+                </nav>
+            </div>
+            
+            <div class="flex items-center space-x-4 w-full lg:w-auto justify-center lg:justify-end">
+                <div class="relative w-full max-w-md lg:w-64">
+                    <input type="text" placeholder="Search a movie/series" class="search-input text-white placeholder-gray-400 rounded-md px-4 py-2 w-full focus:outline-none">
+                    <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+
+                <div id="authContainer" class="shrink-0 relative z-50">
+                    <button type="button" id="loginBtn" onclick="openAuthModal()" class="bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold px-4 py-2 rounded-full transition-all shadow-lg">
+                        Sign In
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="relative pt-16">
+        <div class="backdrop-container relative h-[60vh] lg:h-[80vh] overflow-hidden">
+            <div class="backdrop-slider w-full h-full bg-cover bg-center bg-no-repeat"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-netflix-black via-transparent to-transparent pointer-events-none z-0"></div>
+            
+            <div class="absolute bottom-0 left-0 p-8 lg:p-16 max-w-2xl z-10">
+                <div id="hero-content">
+                    <h1 id="hero-title" class="text-4xl lg:text-6xl font-bold mb-4 leading-tight">Discover Amazing Movies</h1>
+                    <p id="hero-overview" class="text-lg lg:text-xl text-gray-300 mb-6 leading-relaxed">
+                        Explore thousands of movies and TV shows.
+                    </p>
+                    <div class="flex space-x-4">
+                        <button id="hero-play-btn" onclick="handlePlayMovie()" class="netflix-button bg-white text-black px-8 py-3 rounded font-semibold hover:bg-gray-200 transition flex items-center">
+                            <i class="fa-solid fa-play mr-2"></i> Play
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOP AD BANNER -->
+    <div class="px-4 lg:px-16">
+        <div class="ad-banner-slot">
+            <script async="async" data-cfasync="false" src="https://pl30518010.effectivecpmnetwork.com/236ee796530deaa20c802d4c8fe373e4/invoke.js"></script>
+            <div id="container-236ee796530deaa20c802d4c8fe373e4"></div>
+        </div>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="px-4 lg:px-16 space-y-12 pb-20">
+        
+        <!-- Trending Movies -->
+        <section>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl lg:text-3xl font-bold flex items-center">
+                    <i class="fa-solid fa-fire text-netflix-red mr-3"></i> Trending Movies
+                </h2>
+            </div>
+            <div class="scroll-wrapper overflow-hidden">
+                <div class="movie-container flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                    <!-- Movies populate here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- MIDDLE AD BANNER -->
+        <div class="ad-banner-slot">
+            <div id="container-236ee796530deaa20c802d4c8fe373e4"></div>
+        </div>
+
+        <!-- Popular TV Shows -->
+        <section>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl lg:text-3xl font-bold flex items-center">
+                    <i class="fa-solid fa-tv text-netflix-red mr-3"></i> Popular TV Shows
+                </h2>
+            </div>
+            <div class="scroll-wrapper overflow-hidden">
+                <div class="series-container flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                    <!-- TV Shows populate here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 16+ Section -->
+        <section>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl lg:text-3xl font-bold flex items-center">
+                    <i class="fa-solid fa-star text-netflix-red mr-3"></i> 16+
+                </h2>
+            </div>
+            <div class="scroll-wrapper overflow-hidden">
+                <div class="anime-container flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                    <!-- Content populates here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- BOTTOM AD BANNER -->
+        <div class="ad-banner-slot">
+            <!-- Bottom static banner spot -->
+        </div>
+
+    </div>
+    </div>
+
+    <!-- Video Modal / Player Block -->
+    <div id="playerModal" class="hidden fixed inset-0 z-[10000] bg-black/90 flex items-center justify-center p-4">
+        <div class="relative w-full max-w-5xl h-[70vh] bg-black rounded-lg overflow-hidden">
+            <button onclick="closePlayerModal()" class="absolute top-2 right-2 text-white bg-red-600 px-3 py-1 rounded z-50">Close</button>
+            <iframe id="videoIframe" class="w-full h-full" allowfullscreen sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+    </div>
+
+    <!-- Splash Loader Dismissal Script -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loadingScreen');
+                if (loader) {
+                    loader.style.transition = 'opacity 0.5s ease';
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 500);
+                }
+            }, 1500);
+        });
+    </script>
+
+</body>
+</html>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
