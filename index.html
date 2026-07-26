@@ -2136,9 +2136,85 @@
                 subtext.className = "text-red-400 font-semibold text-sm mb-5";
             }
             openAuthModal();
-        } else {
-            window.location.href = `WatchMovie.html${movieId ? '?movieId=' + movieId : ''}`;
+            return;
         }
+
+        // Logged in — route through the Support the Creator ad-gate before playback
+        requestMoviePlayback(movieId);
+    }
+
+    // --- SUPPORT THE CREATOR (Adsterra popunder gate) ---
+    let pendingPlaybackMovieId = '';
+    let sponsorAdTriggeredThisSession = false;
+
+    // Entry point: decide whether the user still needs to see the support modal
+    // for this specific movie, or whether they've already supported it before.
+    function requestMoviePlayback(movieId = '') {
+        pendingPlaybackMovieId = movieId;
+        const supportKey = 'supportAdShown_' + (movieId || 'default');
+
+        if (localStorage.getItem(supportKey) === 'true') {
+            // Already supported this title — go straight to playback
+            proceedToMoviePlayback(movieId);
+        } else {
+            openSupportModal();
+        }
+    }
+
+    function openSupportModal() {
+        const modal = document.getElementById('supportModal');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeSupportModal() {
+        const modal = document.getElementById('supportModal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    // Dynamically injects the Adsterra popunder script exactly once per page
+    // session, on the user's own click — this is what causes the ad to open
+    // in a new tab, rather than firing on every random click across the site.
+    function triggerSponsorAd() {
+        if (sponsorAdTriggeredThisSession) return;
+        sponsorAdTriggeredThisSession = true;
+
+        const adScript = document.createElement('script');
+        adScript.src = 'https://pl30551920.effectivecpmnetwork.com/6c/af/68/6caf6869f9a33322f4661e059875becd.js';
+        adScript.type = 'text/javascript';
+        adScript.async = true;
+        document.body.appendChild(adScript);
+    }
+
+    // Called by the "Watch Ad & Play Movie" button
+    function handleWatchAdAndPlay() {
+        const movieId = pendingPlaybackMovieId;
+        const supportKey = 'supportAdShown_' + (movieId || 'default');
+
+        triggerSponsorAd();
+        localStorage.setItem(supportKey, 'true');
+
+        closeSupportModal();
+        openAdThankYouModal();
+    }
+
+    function openAdThankYouModal() {
+        const modal = document.getElementById('adThankYouModal');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeAdThankYouModal() {
+        const modal = document.getElementById('adThankYouModal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    // Called by "Continue to Movie" on the appreciation modal
+    function handleContinueToMovie() {
+        closeAdThankYouModal();
+        proceedToMoviePlayback(pendingPlaybackMovieId);
+    }
+
+    function proceedToMoviePlayback(movieId) {
+        window.location.href = `WatchMovie.html${movieId ? '?movieId=' + movieId : ''}`;
     }
 
     function openAuthModal() {
@@ -2389,6 +2465,45 @@ function handleLogout() {
         </div>
     </div>
 </div>
+
+<!-- Support the Creator Modal (Adsterra ad-gate, shown once per movie) -->
+<div id="supportModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
+    <div class="bg-gradient-to-b from-neutral-900 to-black border border-violet-500/30 text-white rounded-2xl w-full max-w-md p-7 relative shadow-[0_0_40px_rgba(124,58,237,0.25)] text-center">
+        <button type="button" onclick="closeSupportModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
+
+        <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-violet-600/20 border border-violet-500/40 flex items-center justify-center">
+            <span class="text-2xl">🍿</span>
+        </div>
+
+        <h2 class="text-xl font-bold mb-3 text-white">Support the Creator 🍿</h2>
+        <p class="text-gray-300 text-sm leading-relaxed mb-6">
+            To keep this platform free, please support us by viewing 1 sponsor ad before your video starts. Thank you!
+        </p>
+
+        <button type="button" id="watchAdPlayBtn" onclick="handleWatchAdAndPlay()" class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-play text-sm"></i>
+            <span>Watch Ad & Play Movie</span>
+        </button>
+    </div>
+</div>
+
+<!-- Ad Appreciation Modal (shown right after the sponsor ad fires, before playback) -->
+<div id="adThankYouModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
+    <div class="bg-gradient-to-b from-neutral-900 to-black border border-violet-500/30 text-white rounded-2xl w-full max-w-md p-7 relative shadow-[0_0_40px_rgba(124,58,237,0.25)] text-center">
+        <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-violet-600/20 border border-violet-500/40 flex items-center justify-center">
+            <span class="text-2xl">❤️</span>
+        </div>
+        <h2 class="text-xl font-bold mb-3 text-white">Thank You for Supporting the Creator ❤️</h2>
+        <p class="text-gray-300 text-sm leading-relaxed mb-6">
+            Your support keeps MLTN VAULT free for everyone. Enjoy your movie!
+        </p>
+        <button type="button" onclick="handleContinueToMovie()" class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-play text-sm"></i>
+            <span>Continue to Movie</span>
+        </button>
+    </div>
+</div>
+
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -2534,6 +2649,53 @@ window.db = db;
                 }, 2600);
   }
 });
+</script>
+
+<!-- Thank You Overlay (shown after a movie's HTML5 <video> fires 'ended') -->
+<div id="thankYouOverlay" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
+    <div class="bg-gradient-to-b from-neutral-900 to-black border border-violet-500/30 text-white rounded-2xl w-full max-w-md p-8 relative shadow-[0_0_40px_rgba(124,58,237,0.25)] text-center">
+        <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-violet-600/20 border border-violet-500/40 flex items-center justify-center">
+            <span class="text-2xl">❤️</span>
+        </div>
+        <h2 class="text-xl font-bold mb-3 text-white">Thank You for Watching! ❤️</h2>
+        <p class="text-gray-300 text-sm leading-relaxed mb-6">Thanks for supporting MLTN VAULT!</p>
+        <button type="button" id="watchAgainBtn" onclick="handleWatchAgain()" class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-rotate-right text-sm"></i>
+            <span>Watch Again</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    // Generic hook: whenever this page contains an HTML5 <video> movie player
+    // (e.g. on WatchMovie.html, where the actual playback happens), show the
+    // Thank You overlay when the video's 'ended' event fires, and wire up
+    // "Watch Again". Safe no-op on pages with no <video> element, like this one.
+    function initThankYouOverlayForPlayer(videoEl) {
+        if (!videoEl || videoEl.dataset.thankYouBound === 'true') return;
+        videoEl.dataset.thankYouBound = 'true';
+
+        videoEl.addEventListener('ended', () => {
+            const overlay = document.getElementById('thankYouOverlay');
+            if (overlay) overlay.classList.remove('hidden');
+        });
+    }
+
+    function handleWatchAgain() {
+        const overlay = document.getElementById('thankYouOverlay');
+        if (overlay) overlay.classList.add('hidden');
+
+        const videoEl = document.querySelector('video#moviePlayer, video.movie-player, video');
+        if (videoEl) {
+            videoEl.currentTime = 0;
+            videoEl.play();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const videoEl = document.querySelector('video#moviePlayer, video.movie-player, video');
+        if (videoEl) initThankYouOverlayForPlayer(videoEl);
+    });
 </script>
 
 <!-- Social Bar -->
