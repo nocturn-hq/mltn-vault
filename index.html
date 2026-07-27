@@ -2284,21 +2284,61 @@
 
     // 1. Play Button Click Handler (no longer gated by the ad — playback is
     // now free to start immediately; the ad panel runs on its own 6-hour timer)
-    function handlePlayMovie(movieId = '') {
-        const currentUser = localStorage.getItem('userEmail');
+    // ======== SUPPORT MODAL + AD‑GATING LOGIC ========
+let pendingMovieId = null;
 
-        if (!currentUser) {
-            const subtext = document.getElementById('modalSubtext');
-            if (subtext) {
-                subtext.innerText = "Can't stream without an account. Please sign in or sign up first!";
-                subtext.className = "text-red-400 font-semibold text-sm mb-5";
-            }
-            openAuthModal();
-            return;
+window.handlePlayMovie = function(movieId = '') {
+    const currentUser = localStorage.getItem('userEmail');
+    if (!currentUser) {
+        const subtext = document.getElementById('modalSubtext');
+        if (subtext) {
+            subtext.innerText = "Can't stream without an account. Please sign in or sign up first!";
+            subtext.className = "text-red-400 font-semibold text-sm mb-5";
         }
+        if (typeof openAuthModal === 'function') openAuthModal();
+        return;
+    }
 
+    if (sessionStorage.getItem('ad_watched_session') !== 'true') {
+        // Show the support modal – user must tap the ad link to continue
+        pendingMovieId = movieId;
+        document.getElementById('supportModal').classList.remove('hidden');
+    } else {
+        // Ad already watched – start the movie immediately
         window.location.href = `WatchMovie.html${movieId ? '?movieId=' + movieId : ''}`;
     }
+};
+
+// Intercept dynamically created .play-btn elements (if any) via event delegation
+document.addEventListener('click', function(e) {
+    const playBtn = e.target.closest('.play-btn');
+    if (playBtn) {
+        e.preventDefault();
+        const movieId = playBtn.dataset.movieId || '';
+        handlePlayMovie(movieId);
+    }
+});
+
+// Wire up the Smartlink anchor so it sets the session flag and hides the modal
+document.addEventListener('DOMContentLoaded', function() {
+    const adLink = document.getElementById('watch-ad-btn');
+    if (adLink) {
+        adLink.addEventListener('click', function() {
+            // The browser opens the Smartlink in a new tab – we just record the action
+            sessionStorage.setItem('ad_watched_session', 'true');
+            document.getElementById('supportModal').classList.add('hidden');
+
+            // If a movie was pending, redirect to it now
+            if (pendingMovieId !== null) {
+                const id = pendingMovieId;
+                pendingMovieId = null;
+                setTimeout(() => {
+                    window.location.href = `WatchMovie.html${id ? '?movieId=' + id : ''}`;
+                }, 100);
+            }
+        });
+    }
+});
 
     // --- SUPPORT THE CREATOR (recurring every 6 hours, site-wide) ---
     const SPONSOR_AD_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
