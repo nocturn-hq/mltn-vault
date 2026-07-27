@@ -903,11 +903,11 @@
             </div>
         </section>
 
-        <!-- Native Banner Ad -->
+        <!-- Native Banner Ad (NEW) -->
         <div class="w-full flex justify-center py-2">
-            <div id="container-236ee796530deaa20c802d4c8fe373e4"></div>
+            <div id="container-b5242406abf272334b4c774611fb2217"></div>
         </div>
-        <script async="async" data-cfasync="false" src="https://pl30518010.effectivecpmnetwork.com/236ee796530deaa20c802d4c8fe373e4/invoke.js"></script>
+        <script async="async" data-cfasync="false" src="https://pl30560141.effectivecpmnetwork.com/b5242406abf272334b4c774611fb2217/invoke.js"></script>
 
         <!-- Popular TV Shows -->
         <section>
@@ -2316,6 +2316,7 @@
     // panel if it's actually due, and never interrupts another open modal.
     function maybeShowSponsorPanel() {
         if (!isSponsorAdDue()) return;
+        if (sessionStorage.getItem('ad_watched_session') === 'true') return;
 
         const authModalEl = document.getElementById('authModal');
         const supportModalEl = document.getElementById('supportModal');
@@ -2334,14 +2335,6 @@
     function openSupportModal() {
         const modal = document.getElementById('supportModal');
         if (modal) modal.classList.remove('hidden');
-
-        // Load the popunder script the moment the panel opens (not on the
-        // button click) so it has time to download and arm itself — Adsterra's
-        // popunder script attaches a listener for the *next* click, and if we
-        // only inject it inside the button's own click handler, that click has
-        // already passed by the time the script finishes loading. Pre-arming it
-        // here means the "Watch Ad & Support" click is the one that fires it.
-        armSponsorAdScript();
     }
 
     function closeSupportModal() {
@@ -2349,32 +2342,25 @@
         if (modal) modal.classList.add('hidden');
     }
 
-    let sponsorAdScriptArmed = false;
+    // New popunder injection — only fires once per click
+    let newPopunderInjected = false;
 
-    // Injects your Adsterra popunder script once it's needed. Safe to call
-    // more than once — only actually injects the tag the first time per panel.
-    function armSponsorAdScript() {
-        if (sponsorAdScriptArmed) return;
-        sponsorAdScriptArmed = true;
-
-        const adScript = document.createElement('script');
-        adScript.src = 'https://pl30551920.effectivecpmnetwork.com/6c/af/68/6caf6869f9a33322f4661e059875becd.js';
-        adScript.type = 'text/javascript';
-        adScript.async = true;
-        document.body.appendChild(adScript);
+    function injectNewPopunderScript() {
+        if (newPopunderInjected) return;
+        newPopunderInjected = true;
+        const script = document.createElement('script');
+        script.src = 'https://pl30560140.effectivecpmnetwork.com/79/01/b5/7901b5a10fd6f3bb089462157ba8e06c.js';
+        script.async = true;
+        document.body.appendChild(script);
     }
 
     // Called by the "Watch Ad & Support" button on the support panel
     function handleWatchAdAndPlay() {
-        // Safety net in case the script wasn't armed yet for any reason
-        armSponsorAdScript();
+        injectNewPopunderScript();
+        sessionStorage.setItem('ad_watched_session', 'true');
         localStorage.setItem('lastSponsorAdTime', Date.now().toString());
-
         closeSupportModal();
         openAdThankYouModal();
-
-        // Re-arm for the next 6-hour cycle
-        sponsorAdScriptArmed = false;
     }
 
     function openAdThankYouModal() {
@@ -2649,10 +2635,10 @@ function handleLogout() {
     </div>
 </div>
 
-<!-- Support the Creator Panel (recurring every 6 hours, site-wide) -->
+<!-- Support the Creator Panel (recurring every 6 hours, site-wide) — CLOSE BUTTON REMOVED -->
 <div id="supportModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
     <div class="bg-gradient-to-b from-neutral-900 to-black border border-violet-500/30 text-white rounded-2xl w-full max-w-md p-7 relative shadow-[0_0_40px_rgba(124,58,237,0.25)] text-center">
-        <button type="button" onclick="closeSupportModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
+        <!-- Close button removed — user MUST click "Watch Ad & Support" -->
 
         <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-violet-600/20 border border-violet-500/40 flex items-center justify-center">
             <span class="text-2xl">🍿</span>
@@ -2663,7 +2649,7 @@ function handleLogout() {
             To keep this platform free, please support us by viewing 1 sponsor ad. It only takes a moment. Thank you!
         </p>
 
-        <button type="button" id="watchAdPlayBtn" onclick="handleWatchAdAndPlay()" class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center space-x-2">
+        <button type="button" id="watch-ad-btn" onclick="handleWatchAdAndPlay()" class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center space-x-2">
             <i class="fa-solid fa-heart text-sm"></i>
             <span>Watch Ad & Support</span>
         </button>
