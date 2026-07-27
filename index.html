@@ -2584,9 +2584,6 @@ function handleLogout() {
         }
     });
 </script>
-<!-- Auth Modal Popup -->
-<div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
-    <div class="bg-neutral-900 border border-neutral-800 text-white rounded-xl w-full max-w-md p-6 relative shadow-2xl">
         <!-- Close Button -->
         <button type="button" onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
         
@@ -2638,24 +2635,22 @@ function handleLogout() {
 <!-- Support the Creator Panel (recurring every 6 hours, site-wide) — CLOSE BUTTON REMOVED -->
 <div id="supportModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
     <div class="bg-gradient-to-b from-neutral-900 to-black border border-violet-500/30 text-white rounded-2xl w-full max-w-md p-7 relative shadow-[0_0_40px_rgba(124,58,237,0.25)] text-center">
-        <!-- Close button removed — user MUST click "Watch Ad & Support" -->
-
         <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-violet-600/20 border border-violet-500/40 flex items-center justify-center">
             <span class="text-2xl">🍿</span>
         </div>
-
         <h2 class="text-xl font-bold mb-3 text-white">Support the Creator 🍿</h2>
         <p class="text-gray-300 text-sm leading-relaxed mb-6">
             To keep this platform free, please support us by viewing 1 sponsor ad. It only takes a moment. Thank you!
         </p>
-
-        <button type="button" id="watch-ad-btn" onclick="handleWatchAdAndPlay()" class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center space-x-2">
+        <a id="watch-ad-btn" 
+           href="https://www.effectivecpmnetwork.com/kgdbavxs?key=a1fa85aaaef9ba38646e10ddb7841548" 
+           target="_blank" rel="noopener noreferrer"
+           class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center space-x-2 no-underline">
             <i class="fa-solid fa-heart text-sm"></i>
             <span>Watch Ad & Support</span>
-        </button>
+        </a>
     </div>
 </div>
-
 <!-- Ad Appreciation Panel (shown right after the sponsor ad fires) -->
 <div id="adThankYouModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
     <div class="bg-gradient-to-b from-neutral-900 to-black border border-violet-500/30 text-white rounded-2xl w-full max-w-md p-7 relative shadow-[0_0_40px_rgba(124,58,237,0.25)] text-center">
