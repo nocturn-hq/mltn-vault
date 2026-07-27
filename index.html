@@ -2381,11 +2381,7 @@
 
     // Check shortly after page load (giving the intro splash time to clear),
     // then re-check every minute in case the tab stays open past 6 hours.
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(maybeShowSponsorPanel, 6000);
-        setInterval(maybeShowSponsorPanel, 60 * 1000);
-    });
-
+    
     function openAuthModal() {
         document.getElementById('authModal').classList.remove('hidden');
     }
