@@ -74,6 +74,9 @@
     </script>
     
     <title>MLTN VAULT - Happy Watching</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="netflix-style.css">
     <link rel="stylesheet" href="search.css">
@@ -89,9 +92,9 @@
             theme: {
                 extend: {
                     colors: {
-                        'netflix-red': '#E50914',
+                        'netflix-red': '#9D4EDD',
                         'netflix-black': '#000000',
-                        'netflix-dark': '#141414',
+                        'netflix-dark': '#160A26',
                         'netflix-gray': '#333333',
                     }
                 }
@@ -100,6 +103,36 @@
     </script>
     
     <style>
+        /* SHADOW MONARCH THEME: typography */
+        html, body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1, h2, h3, h4,
+        .watch-title,
+        .server-selection h3,
+        .season-selection h3,
+        .episode-selection h3,
+        .modal-header h3,
+        footer h3 {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.03em;
+        }
+
+        /* Monarch glow accents on the dark background */
+        body.bg-netflix-black {
+            background: radial-gradient(ellipse at 50% -10%, rgba(90, 24, 154, 0.25) 0%, rgba(0,0,0,0) 60%), #000000 !important;
+        }
+
+        .navbar-glass {
+            box-shadow: 0 1px 30px rgba(157, 78, 221, 0.15);
+        }
+
+        ::selection {
+            background: rgba(157, 78, 221, 0.4);
+            color: #ffffff;
+        }
+
         /* MAXIMUM FORCE: Block ALL dark mode attempts */
         :root {
             color-scheme: light only !important;
@@ -187,11 +220,11 @@
         
         /* Lock Netflix brand colors */
         .text-netflix-red {
-            color: #E50914 !important;
+            color: #9D4EDD !important;
         }
         
         .bg-netflix-red {
-            background-color: #E50914 !important;
+            background-color: #9D4EDD !important;
         }
         
         .bg-netflix-black {
@@ -220,7 +253,7 @@
         
         /* Professional Watch Page Styling */
         .watch-hero {
-            background: linear-gradient(135deg, rgba(229, 9, 20, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+            background: linear-gradient(135deg, rgba(157, 78, 221, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
             border-radius: 20px;
             overflow: hidden;
             margin-bottom: 2rem;
@@ -309,15 +342,15 @@
         }
         
         .server-btn:hover {
-            background: rgba(229, 9, 20, 0.2);
-            border-color: rgba(229, 9, 20, 0.5);
+            background: rgba(157, 78, 221, 0.2);
+            border-color: rgba(157, 78, 221, 0.5);
             transform: translateY(-2px);
         }
         
         .server-btn.active {
-            background: linear-gradient(135deg, #E50914, #B8070F);
-            border-color: #E50914;
-            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.3);
+            background: linear-gradient(135deg, #9D4EDD, #5A189A);
+            border-color: #9D4EDD;
+            box-shadow: 0 8px 25px rgba(157, 78, 221, 0.3);
         }
         
         .movie-details {
@@ -354,13 +387,13 @@
         }
         
         .detail-value a {
-            color: #E50914;
+            color: #9D4EDD;
             text-decoration: none;
             transition: color 0.3s ease;
         }
         
         .detail-value a:hover {
-            color: #ff1e2d;
+            color: #C77DFF;
         }
         
         .season-selection {
@@ -393,15 +426,15 @@
         }
         
         .season-btn:hover {
-            background: rgba(229, 9, 20, 0.2);
-            border-color: rgba(229, 9, 20, 0.5);
+            background: rgba(157, 78, 221, 0.2);
+            border-color: rgba(157, 78, 221, 0.5);
             transform: translateY(-2px);
         }
         
         .season-btn.active {
-            background: linear-gradient(135deg, #E50914, #B8070F);
-            border-color: #E50914;
-            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.3);
+            background: linear-gradient(135deg, #9D4EDD, #5A189A);
+            border-color: #9D4EDD;
+            box-shadow: 0 8px 25px rgba(157, 78, 221, 0.3);
         }
         
         .episode-selection {
@@ -434,15 +467,15 @@
         }
         
         .episode-btn:hover {
-            background: rgba(229, 9, 20, 0.2);
-            border-color: rgba(229, 9, 20, 0.5);
+            background: rgba(157, 78, 221, 0.2);
+            border-color: rgba(157, 78, 221, 0.5);
             transform: translateY(-1px);
         }
         
         .episode-btn.active {
-            background: linear-gradient(135deg, #E50914, #B8070F);
-            border-color: #E50914;
-            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+            background: linear-gradient(135deg, #9D4EDD, #5A189A);
+            border-color: #9D4EDD;
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
         }
         
         /* Mobile Responsiveness */
@@ -497,7 +530,7 @@
         /* Global Minimal White Scrollbar for All Pages */
         * {
             scrollbar-width: thin !important;
-            scrollbar-color: rgba(255, 255, 255, 0.3) transparent !important;
+            scrollbar-color: rgba(157, 78, 221, 0.4) transparent !important;
         }
 
         *::-webkit-scrollbar {
@@ -511,13 +544,13 @@
         }
 
         *::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3) !important;
+            background: rgba(157, 78, 221, 0.4) !important;
             border-radius: 10px !important;
             transition: background 0.3s ease !important;
         }
 
         *::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5) !important;
+            background: rgba(157, 78, 221, 0.6) !important;
         }
 
         *::-webkit-scrollbar-corner {
@@ -527,7 +560,7 @@
         /* Body and HTML specific scrollbar */
         html, body {
             scrollbar-width: thin !important;
-            scrollbar-color: rgba(255, 255, 255, 0.3) transparent !important;
+            scrollbar-color: rgba(157, 78, 221, 0.4) transparent !important;
         }
 
         html::-webkit-scrollbar, body::-webkit-scrollbar {
@@ -540,18 +573,18 @@
         }
 
         html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3) !important;
+            background: rgba(157, 78, 221, 0.4) !important;
             border-radius: 10px !important;
             transition: background 0.3s ease !important;
         }
 
         html::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5) !important;
+            background: rgba(157, 78, 221, 0.6) !important;
         }
 
         /* Episode Selection Modal Styles */
         .episode-select-btn {
-            background: linear-gradient(135deg, #E50914, #B8070F);
+            background: linear-gradient(135deg, #9D4EDD, #5A189A);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -566,12 +599,12 @@
             width: 100%;
             max-width: 300px;
             margin: 1rem auto;
-            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
         }
 
         .episode-select-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+            box-shadow: 0 6px 20px rgba(157, 78, 221, 0.4);
         }
 
         /* CUSTOM MODAL CSS - OVERRIDES TAILWIND COMPLETELY */
@@ -623,7 +656,7 @@
         .modal-content {
             background: linear-gradient(135deg, rgba(15, 15, 15, 0.98), rgba(25, 25, 25, 0.95)) !important;
             border-radius: 20px !important;
-            border: 2px solid rgba(229, 9, 20, 0.6) !important;
+            border: 2px solid rgba(157, 78, 221, 0.6) !important;
             box-shadow: 
                 0 25px 50px rgba(0, 0, 0, 0.8),
                 0 0 0 1px rgba(255, 255, 255, 0.1),
@@ -772,19 +805,19 @@
 
         .season-btn:hover,
         .episode-btn:hover {
-            background: linear-gradient(135deg, rgba(229, 9, 20, 0.4), rgba(185, 7, 15, 0.5)) !important;
-            border-color: rgba(229, 9, 20, 0.8) !important;
+            background: linear-gradient(135deg, rgba(157, 78, 221, 0.4), rgba(185, 7, 15, 0.5)) !important;
+            border-color: rgba(157, 78, 221, 0.8) !important;
             transform: translateY(-4px) scale(1.03) !important;
             box-shadow: 
-                0 8px 25px rgba(229, 9, 20, 0.3),
+                0 8px 25px rgba(157, 78, 221, 0.3),
                 0 4px 15px rgba(0, 0, 0, 0.3) !important;
         }
 
         .season-btn.active {
-            background: linear-gradient(135deg, rgba(229, 9, 20, 0.6), rgba(185, 7, 15, 0.7)) !important;
-            border-color: #e50914 !important;
+            background: linear-gradient(135deg, rgba(157, 78, 221, 0.6), rgba(185, 7, 15, 0.7)) !important;
+            border-color: #9d4edd !important;
             box-shadow: 
-                0 0 20px rgba(229, 9, 20, 0.5),
+                0 0 20px rgba(157, 78, 221, 0.5),
                 0 4px 15px rgba(0, 0, 0, 0.3) !important;
             transform: scale(1.05) !important;
         }
@@ -830,31 +863,20 @@
         /* Hover effects */
         .episode-btn:hover {
             background: linear-gradient(145deg, rgba(35, 35, 35, 0.98), rgba(25, 25, 25, 0.99)) !important;
-            border-color: rgba(229, 9, 20, 0.6) !important;
+            border-color: rgba(157, 78, 221, 0.6) !important;
             transform: translateY(-8px) scale(1.02) !important;
             box-shadow: 
-                0 12px 40px rgba(229, 9, 20, 0.2),
+                0 12px 40px rgba(157, 78, 221, 0.2),
                 0 8px 25px rgba(0, 0, 0, 0.4),
-                0 0 0 1px rgba(229, 9, 20, 0.3) !important;
-        }
-
-        /* Hover effects - no play icon needed */
-        .episode-btn:hover {
-            background: linear-gradient(145deg, rgba(35, 35, 35, 0.98), rgba(25, 25, 25, 0.99)) !important;
-            border-color: rgba(229, 9, 20, 0.6) !important;
-            transform: translateY(-8px) scale(1.02) !important;
-            box-shadow: 
-                0 12px 40px rgba(229, 9, 20, 0.2),
-                0 8px 25px rgba(0, 0, 0, 0.4),
-                0 0 0 1px rgba(229, 9, 20, 0.3) !important;
+                0 0 0 1px rgba(157, 78, 221, 0.3) !important;
         }
 
         /* Selected state */
         .episode-btn.selected {
-            background: linear-gradient(145deg, rgba(229, 9, 20, 0.15), rgba(185, 7, 15, 0.2)) !important;
-            border-color: rgba(229, 9, 20, 0.8) !important;
+            background: linear-gradient(145deg, rgba(157, 78, 221, 0.15), rgba(185, 7, 15, 0.2)) !important;
+            border-color: rgba(157, 78, 221, 0.8) !important;
             box-shadow: 
-                0 0 30px rgba(229, 9, 20, 0.4),
+                0 0 30px rgba(157, 78, 221, 0.4),
                 0 8px 25px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
             transform: scale(1.03) !important;
@@ -862,15 +884,15 @@
 
         /* Episode number badge */
         .episode-number {
-            color: #E50914 !important;
+            color: #9D4EDD !important;
             font-weight: 700 !important;
             font-size: 14px !important;
             display: inline-block !important;
-            background: rgba(229, 9, 20, 0.15) !important;
+            background: rgba(157, 78, 221, 0.15) !important;
             padding: 4px 12px !important;
             border-radius: 20px !important;
             margin-bottom: 8px !important;
-            border: 1px solid rgba(229, 9, 20, 0.3) !important;
+            border: 1px solid rgba(157, 78, 221, 0.3) !important;
             text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important;
             letter-spacing: 0.5px !important;
             align-self: flex-start !important;
@@ -974,18 +996,6 @@
             font-size: 9px !important;
         }
 
-        /* Play button pulse animation */
-        @keyframes pulse-play {
-            0%, 100% {
-                transform: scale(1.1) !important;
-                box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4) !important;
-            }
-            50% {
-                transform: scale(1.2) !important;
-                box-shadow: 0 6px 20px rgba(229, 9, 20, 0.6) !important;
-            }
-        }
-
         /* Now playing indicator */
         .episode-btn.playing .episode-number::after {
             content: '♪' !important;
@@ -1007,12 +1017,12 @@
         @keyframes episode-glow {
             0%, 100% {
                 box-shadow: 
-                    0 0 30px rgba(229, 9, 20, 0.4),
+                    0 0 30px rgba(157, 78, 221, 0.4),
                     0 8px 25px rgba(0, 0, 0, 0.3) !important;
             }
             50% {
                 box-shadow: 
-                    0 0 40px rgba(229, 9, 20, 0.6),
+                    0 0 40px rgba(157, 78, 221, 0.6),
                     0 12px 35px rgba(0, 0, 0, 0.4) !important;
             }
         }
@@ -1200,7 +1210,7 @@
         
         .episode-select-btn, #episodeModalBtn {
             background: linear-gradient(135deg, #1a1a1a, #2d2d2d) !important;
-            border: 2px solid rgba(229, 9, 20, 0.3) !important;
+            border: 2px solid rgba(157, 78, 221, 0.3) !important;
             border-radius: 16px !important;
             padding: 1.2rem 2rem !important;
             color: white !important;
@@ -1215,7 +1225,7 @@
             justify-content: center !important;
             visibility: visible !important;
             box-shadow: 
-                0 8px 25px rgba(229, 9, 20, 0.2),
+                0 8px 25px rgba(157, 78, 221, 0.2),
                 0 4px 15px rgba(0, 0, 0, 0.3) !important;
             letter-spacing: 0.5px !important;
             position: relative !important;
@@ -1232,9 +1242,9 @@
             right: -5px !important;
             bottom: -5px !important;
             background: linear-gradient(45deg, 
-                rgba(229, 9, 20, 0.8), 
+                rgba(157, 78, 221, 0.8), 
                 rgba(255, 26, 43, 0.6),
-                rgba(229, 9, 20, 0.8),
+                rgba(157, 78, 221, 0.8),
                 rgba(255, 26, 43, 0.6)
             ) !important;
             border-radius: 20px !important;
@@ -1248,18 +1258,18 @@
                 transform: scale(1) !important;
                 opacity: 0.6 !important;
                 filter: blur(3px) !important;
-                box-shadow: 0 0 20px rgba(229, 9, 20, 0.5) !important;
+                box-shadow: 0 0 20px rgba(157, 78, 221, 0.5) !important;
             }
             50% {
                 transform: scale(1.08) !important;
                 opacity: 1 !important;
                 filter: blur(6px) !important;
-                box-shadow: 0 0 30px rgba(229, 9, 20, 0.8) !important;
+                box-shadow: 0 0 30px rgba(157, 78, 221, 0.8) !important;
             }
         }
         
         .episode-select-btn i {
-            color: #e50914 !important;
+            color: #9d4edd !important;
             font-size: 1.2rem !important;
             margin-right: 0.5rem !important;
             transition: all 0.3s ease !important;
@@ -1279,7 +1289,7 @@
             left: -100% !important;
             width: 100% !important;
             height: 100% !important;
-            background: linear-gradient(90deg, transparent, rgba(229, 9, 20, 0.1), transparent) !important;
+            background: linear-gradient(90deg, transparent, rgba(157, 78, 221, 0.1), transparent) !important;
             transition: left 0.5s ease !important;
             z-index: 1 !important;
         }
@@ -1290,10 +1300,10 @@
         
         .episode-select-btn:hover {
             transform: translateY(-3px) scale(1.02) !important;
-            border-color: rgba(229, 9, 20, 0.6) !important;
+            border-color: rgba(157, 78, 221, 0.6) !important;
             background: linear-gradient(135deg, #2d2d2d, #1a1a1a) !important;
             box-shadow: 
-                0 12px 35px rgba(229, 9, 20, 0.3),
+                0 12px 35px rgba(157, 78, 221, 0.3),
                 0 6px 20px rgba(0, 0, 0, 0.4) !important;
         }
         
@@ -1315,7 +1325,7 @@
         }
         
         .episode-select-btn:hover i {
-            color: #ff1a2b !important;
+            color: #C77DFF !important;
             transform: scale(1.1) !important;
         }
         
@@ -1396,12 +1406,12 @@
             <!-- Content will be populated by JavaScript -->
         </div>
 
-        <!-- 1. NATIVE BANNER (Placed right below content container) -->
+        <!-- Native Banner Ad -->
         <div style="text-align: center; margin: 20px 0;">
-            <script async="async" data-cfasync="false" src="https://pl30518010.effectivecpmnetwork.com/236ee796530deaa20c802d4c8fe373e4/invoke.js"></script>
-            <div id="container-236ee796530deaa20c802d4c8fe373e4"></div>
+            <script async="async" data-cfasync="false" src="https://pl30560141.effectivecpmnetwork.com/b5242406abf272334b4c774611fb2217/invoke.js"></script>
+            <div id="container-b5242406abf272334b4c774611fb2217"></div>
         </div>
-        
+
         <!-- Error State -->
         <div id="error" class="hidden flex items-center justify-center min-h-screen">
             <div class="text-center">
@@ -1444,6 +1454,20 @@
         </div>
     </div>   
     
+    <!-- 300x250 Banner Ad -->
+    <div style="text-align: center; margin: 30px auto; display: flex; justify-content: center;">
+        <script>
+          atOptions = {
+            'key' : '680da52bfa2d0e5487922b6f5906227a',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highperformanceformat.com/680da52bfa2d0e5487922b6f5906227a/invoke.js"></script>
+    </div>
+
     <!-- Footer -->
     <footer class="relative z-10 bg-netflix-dark mt-20 py-16">
         <div class="px-4 lg:px-16">
@@ -1483,7 +1507,7 @@
             </div>
             
             <div class="border-t border-gray-700 mt-12 pt-8 text-center">
-                <p class="text-gray-400">&copy; 2024 MLTN VAULT. All rights reserved. | Privacy Policy | Terms of Service</p>
+                <p class="text-gray-400">&copy;  MLTN VAULT. All rights reserved. | Privacy Policy | Terms of Service</p>
             </div>
         </div>
     </footer>
@@ -1498,9 +1522,9 @@
             }
         });
 
-        function ins(){window.open('https://www.instagram.com/unkown-user/', '_blank');}
-        function lin(){window.open('https://www.linkedin.com/in/christian-signo-070733323/', '_blank')}
-        function git(){window.open('https://github.com/Xtian69420', '_blank')}
+        function ins(){window.open('https://wa.me/254713421283', '_blank');}
+function lin(){window.open('https://wa.me/254713421283', '_blank');}
+function git(){window.open('https://wa.me/254713421283', '_blank');}
 
         function home(){
             window.location.href="index.html";
@@ -1522,8 +1546,5 @@
             });
         }
     </script>
-
-    <!-- 2. SOCIAL BAR (Placed right before </body>) -->
-    <script src="https://pl30518011.effectivecpmnetwork.com/d1/61/b8/d161b8dadb2a341f3cd1e52f68039dab.js"></script>
 </body>
 </html>
