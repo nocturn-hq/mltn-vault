@@ -709,6 +709,30 @@
             }
         }
     </style>
+
+    <!-- ================= AD PLACEMENT STYLES ================= -->
+    <style id="ad-placement-styles">
+        .ad-slot {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .ad-slot-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.25);
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        .ad-slot-native {
+            margin: 8px 0 4px 0;
+        }
+        .ad-slot-footer {
+            margin-top: 8px;
+        }
+    </style>
 </head>
 <body class="bg-netflix-black text-white min-h-screen">
   <!-- Anime Splash Intro Overlay -->
@@ -903,11 +927,11 @@
             </div>
         </section>
 
-        <!-- Native Banner Ad (NEW) -->
-        <div class="w-full flex justify-center py-2">
+        <!-- Ad: Native Banner (placed between content rows, blends with the page body, doesn't block nav/hero) -->
+        <div class="ad-slot ad-slot-native">
+            <script async="async" data-cfasync="false" src="https://pl30560141.effectivecpmnetwork.com/b5242406abf272334b4c774611fb2217/invoke.js"></script>
             <div id="container-b5242406abf272334b4c774611fb2217"></div>
         </div>
-        <script async="async" data-cfasync="false" src="https://pl30560141.effectivecpmnetwork.com/b5242406abf272334b4c774611fb2217/invoke.js"></script>
 
         <!-- Popular TV Shows -->
         <section>
@@ -1121,6 +1145,19 @@
         <a href="https://wa.me/254713421283" target="_blank" class="text-gray-400 hover:text-netflix-red transition-colors">
             <i class="fa-brands fa-whatsapp text-2xl"></i>
         </a>
+    </div>
+    <!-- Ad: 300x250 Banner (tucked into the footer column, away from nav/hero/CTAs) -->
+    <div class="ad-slot ad-slot-footer">
+        <script>
+            atOptions = {
+                'key' : '680da52bfa2d0e5487922b6f5906227a',
+                'format' : 'iframe',
+                'height' : 250,
+                'width' : 300,
+                'params' : {}
+            };
+        </script>
+        <script src="https://www.highperformanceformat.com/680da52bfa2d0e5487922b6f5906227a/invoke.js"></script>
     </div>
 </div>
                 </div>
@@ -2282,8 +2319,7 @@
     // --- AUTHENTICATION & STREAM GUARD ---
     let isSignUp = false;
 
-    // 1. Play Button Click Handler (no longer gated by the ad — playback is
-    // now free to start immediately; the ad panel runs on its own 6-hour timer)
+    // 1. Play Button Click Handler
     function handlePlayMovie(movieId = '') {
         const currentUser = localStorage.getItem('userEmail');
 
@@ -2299,92 +2335,6 @@
 
         window.location.href = `WatchMovie.html${movieId ? '?movieId=' + movieId : ''}`;
     }
-
-    // --- SUPPORT THE CREATOR (recurring every 6 hours, site-wide) ---
-    const SPONSOR_AD_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
-
-    function getLastSponsorAdTime() {
-        const stored = localStorage.getItem('lastSponsorAdTime');
-        return stored ? parseInt(stored, 10) : 0;
-    }
-
-    function isSponsorAdDue() {
-        return (Date.now() - getLastSponsorAdTime()) >= SPONSOR_AD_INTERVAL_MS;
-    }
-
-    // Checked periodically while the user is on the site. Only shows the
-    // panel if it's actually due, and never interrupts another open modal.
-    function maybeShowSponsorPanel() {
-        if (!isSponsorAdDue()) return;
-        if (sessionStorage.getItem('ad_watched_session') === 'true') return;
-
-        const authModalEl = document.getElementById('authModal');
-        const supportModalEl = document.getElementById('supportModal');
-        const adThankYouModalEl = document.getElementById('adThankYouModal');
-
-        const somethingElseOpen =
-            (authModalEl && !authModalEl.classList.contains('hidden')) ||
-            (supportModalEl && !supportModalEl.classList.contains('hidden')) ||
-            (adThankYouModalEl && !adThankYouModalEl.classList.contains('hidden'));
-
-        if (somethingElseOpen) return;
-
-        openSupportModal();
-    }
-
-    function openSupportModal() {
-        const modal = document.getElementById('supportModal');
-        if (modal) modal.classList.remove('hidden');
-    }
-
-    function closeSupportModal() {
-        const modal = document.getElementById('supportModal');
-        if (modal) modal.classList.add('hidden');
-    }
-
-    // New popunder injection — only fires once per click
-    let newPopunderInjected = false;
-
-    function injectNewPopunderScript() {
-        if (newPopunderInjected) return;
-        newPopunderInjected = true;
-        const script = document.createElement('script');
-        script.src = 'https://pl30560140.effectivecpmnetwork.com/79/01/b5/7901b5a10fd6f3bb089462157ba8e06c.js';
-        script.async = true;
-        document.body.appendChild(script);
-    }
-
-    // Called by the "Watch Ad & Support" button on the support panel
-    function handleWatchAdAndPlay() {
-        injectNewPopunderScript();
-        sessionStorage.setItem('ad_watched_session', 'true');
-        localStorage.setItem('lastSponsorAdTime', Date.now().toString());
-        closeSupportModal();
-        openAdThankYouModal();
-    }
-
-    function openAdThankYouModal() {
-        const modal = document.getElementById('adThankYouModal');
-        if (modal) modal.classList.remove('hidden');
-    }
-
-    function closeAdThankYouModal() {
-        const modal = document.getElementById('adThankYouModal');
-        if (modal) modal.classList.add('hidden');
-    }
-
-    // Called by "Continue" on the appreciation panel — just dismisses it and
-    // lets the user keep browsing/streaming; the next panel is 6 hours out.
-    function handleContinueToMovie() {
-        closeAdThankYouModal();
-    }
-
-    // Check shortly after page load (giving the intro splash time to clear),
-    // then re-check every minute in case the tab stays open past 6 hours.
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(maybeShowSponsorPanel, 6000);
-        setInterval(maybeShowSponsorPanel, 60 * 1000);
-    });
 
     function openAuthModal() {
         document.getElementById('authModal').classList.remove('hidden');
@@ -2635,43 +2585,71 @@ function handleLogout() {
     </div>
 </div>
 
-<!-- Support the Creator Panel (recurring every 6 hours, site-wide) — CLOSE BUTTON REMOVED -->
-<div id="supportModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
-    <div class="bg-gradient-to-b from-neutral-900 to-black border border-violet-500/30 text-white rounded-2xl w-full max-w-md p-7 relative shadow-[0_0_40px_rgba(124,58,237,0.25)] text-center">
-        <!-- Close button removed — user MUST click "Watch Ad & Support" -->
-
-        <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-violet-600/20 border border-violet-500/40 flex items-center justify-center">
-            <span class="text-2xl">🍿</span>
+<!-- Support the Creator Ad Modal (shows once, resets every 6 hours) -->
+<div id="supportAdModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[9997] hidden flex items-center justify-center p-4">
+    <div class="bg-neutral-900/95 border border-violet-500/25 text-white rounded-2xl w-full max-w-sm p-8 relative shadow-[0_25px_60px_rgba(0,0,0,0.6)] text-center">
+        <!-- Icon -->
+        <div class="w-20 h-20 mx-auto mb-5 rounded-full bg-gradient-to-br from-violet-800 to-black border border-violet-500/40 flex items-center justify-center text-4xl shadow-lg">
+            🍿
         </div>
 
-        <h2 class="text-xl font-bold mb-3 text-white">Support the Creator 🍿</h2>
-        <p class="text-gray-300 text-sm leading-relaxed mb-6">
+        <h3 class="text-xl font-bold mb-3">Support the Creator 🍿</h3>
+
+        <p class="text-gray-300 text-sm leading-relaxed mb-2">
             To keep this platform free, please support us by viewing 1 sponsor ad. It only takes a moment. Thank you!
         </p>
-
-        <button type="button" id="watch-ad-btn" onclick="handleWatchAdAndPlay()" class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center space-x-2">
-            <i class="fa-solid fa-heart text-sm"></i>
-            <span>Watch Ad & Support</span>
-        </button>
-    </div>
-</div>
-
-<!-- Ad Appreciation Panel (shown right after the sponsor ad fires) -->
-<div id="adThankYouModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
-    <div class="bg-gradient-to-b from-neutral-900 to-black border border-violet-500/30 text-white rounded-2xl w-full max-w-md p-7 relative shadow-[0_0_40px_rgba(124,58,237,0.25)] text-center">
-        <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-violet-600/20 border border-violet-500/40 flex items-center justify-center">
-            <span class="text-2xl">❤️</span>
-        </div>
-        <h2 class="text-xl font-bold mb-3 text-white">Thank You for Supporting the Creator ❤️</h2>
-        <p class="text-gray-300 text-sm leading-relaxed mb-6">
-            Your support keeps MLTN VAULT free for everyone. Enjoy the rest of your stream!
+        <p class="text-gray-500 text-xs leading-relaxed mb-6">
+            This site is supported by ads. Once you continue, you won't be asked again for a while.
         </p>
-        <button type="button" onclick="handleContinueToMovie()" class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center space-x-2">
-            <i class="fa-solid fa-check text-sm"></i>
-            <span>Continue</span>
+
+        <button type="button" onclick="handleSupportAdClick()" class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center gap-2">
+            <span>♡</span>
+            <span>Watch Ad &amp; Support</span>
         </button>
     </div>
 </div>
+
+<script>
+    // --- Support the Creator ad modal logic ---
+    (function () {
+        const SUPPORT_AD_KEY = 'supportAdLastShown';
+        const RESET_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
+        const SMART_LINK = 'https://www.effectivecpmnetwork.com/kgdbavxs?key=a1fa85aaaef9ba38646e10ddb7841548';
+
+        function shouldShowSupportModal() {
+            const last = localStorage.getItem(SUPPORT_AD_KEY);
+            if (!last) return true;
+            const elapsed = Date.now() - parseInt(last, 10);
+            return elapsed >= RESET_INTERVAL_MS;
+        }
+
+        function markSupportModalSeen() {
+            localStorage.setItem(SUPPORT_AD_KEY, Date.now().toString());
+        }
+
+        window.closeSupportModal = function () {
+            const modal = document.getElementById('supportAdModal');
+            if (modal) modal.classList.add('hidden');
+            markSupportModalSeen();
+        };
+
+        window.handleSupportAdClick = function () {
+            markSupportModalSeen();
+            const modal = document.getElementById('supportAdModal');
+            if (modal) modal.classList.add('hidden');
+            window.open(SMART_LINK, '_blank', 'noopener');
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!shouldShowSupportModal()) return;
+            // Wait for the intro splash to finish before showing the panel
+            setTimeout(function () {
+                const modal = document.getElementById('supportAdModal');
+                if (modal) modal.classList.remove('hidden');
+            }, 6000);
+        });
+    })();
+</script>
 
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -2818,53 +2796,6 @@ window.db = db;
                 }, 2600);
   }
 });
-</script>
-
-<!-- Thank You Overlay (shown after a movie's HTML5 <video> fires 'ended') -->
-<div id="thankYouOverlay" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
-    <div class="bg-gradient-to-b from-neutral-900 to-black border border-violet-500/30 text-white rounded-2xl w-full max-w-md p-8 relative shadow-[0_0_40px_rgba(124,58,237,0.25)] text-center">
-        <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-violet-600/20 border border-violet-500/40 flex items-center justify-center">
-            <span class="text-2xl">❤️</span>
-        </div>
-        <h2 class="text-xl font-bold mb-3 text-white">Thank You for Watching! ❤️</h2>
-        <p class="text-gray-300 text-sm leading-relaxed mb-6">Thanks for supporting MLTN VAULT!</p>
-        <button type="button" id="watchAgainBtn" onclick="handleWatchAgain()" class="w-full bg-violet-600 hover:bg-violet-700 font-bold py-3 rounded-lg text-white transition duration-200 flex items-center justify-center space-x-2">
-            <i class="fa-solid fa-rotate-right text-sm"></i>
-            <span>Watch Again</span>
-        </button>
-    </div>
-</div>
-
-<script>
-    // Generic hook: whenever this page contains an HTML5 <video> movie player
-    // (e.g. on WatchMovie.html, where the actual playback happens), show the
-    // Thank You overlay when the video's 'ended' event fires, and wire up
-    // "Watch Again". Safe no-op on pages with no <video> element, like this one.
-    function initThankYouOverlayForPlayer(videoEl) {
-        if (!videoEl || videoEl.dataset.thankYouBound === 'true') return;
-        videoEl.dataset.thankYouBound = 'true';
-
-        videoEl.addEventListener('ended', () => {
-            const overlay = document.getElementById('thankYouOverlay');
-            if (overlay) overlay.classList.remove('hidden');
-        });
-    }
-
-    function handleWatchAgain() {
-        const overlay = document.getElementById('thankYouOverlay');
-        if (overlay) overlay.classList.add('hidden');
-
-        const videoEl = document.querySelector('video#moviePlayer, video.movie-player, video');
-        if (videoEl) {
-            videoEl.currentTime = 0;
-            videoEl.play();
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const videoEl = document.querySelector('video#moviePlayer, video.movie-player, video');
-        if (videoEl) initThankYouOverlayForPlayer(videoEl);
-    });
 </script>
 
 </body>
