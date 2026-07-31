@@ -1301,13 +1301,14 @@
                 modalBackdrop.outerHTML = `
                     <div id="modalBackdrop" class="w-full h-full relative overflow-hidden">
                         <iframe 
-                            id="trailerIframe"
-                            src="https://www.youtube.com/embed/${currentMovieTrailer.key}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&disablekb=1&enablejsapi=1&cc_load_policy=0&playsinline=1&widget_referrer=https%3A%2F%2Fwww.netflix.com"
-                            class="absolute inset-0 w-full h-full"
-                            style="width: 170%; height: 170%; left: -35%; top: -35%; object-fit: cover;"
-                            allowfullscreen
-                            allow="autoplay; encrypted-media">
-                        </iframe>
+    id="trailerIframe"
+    src="https://www.youtube.com/embed/${currentMovieTrailer.key}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&disablekb=1&enablejsapi=1&cc_load_policy=0&playsinline=1&widget_referrer=https%3A%2F%2Fwww.netflix.com"
+    class="absolute inset-0 w-full h-full"
+    style="width: 170%; height: 170%; left: -35%; top: -35%; object-fit: cover;"
+    allowfullscreen
+    allow="autoplay; encrypted-media"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-presentation">
+</iframe>
                     </div>
                 `;
                 
@@ -2774,7 +2775,11 @@ window.db = db;
         window.addEventListener('DOMContentLoaded', () => {
             const logoBox = document.getElementById('animeLogoBox');
             const loadingScreen = document.getElementById('loadingScreen');
-
+  // Override window.open to block mid-movie ad popups
+window.open = function() {
+  console.log("Blocked an automatic ad popup!");
+  return null;
+};
             if (logoBox && loadingScreen) {
                 // Phase 1: Heartbeat runs automatically on load...
 
@@ -2793,10 +2798,53 @@ window.db = db;
                 // Phase 4: Hide splash overlay completely after 2.6 seconds
                 setTimeout(() => {
                     loadingScreen.style.display = 'none';
-                }, 2600);
+                // Check if user has seen notice
+      if (!localStorage.getItem('hasSeenAdNotice')) {
+        document.getElementById('adNoticeModal')?.classList.remove('hidden');
+      }
+    }, 2600);
   }
 });
-</script>
 
+function closeNoticeModal() {
+  document.getElementById('adNoticeModal')?.classList.add('hidden');
+  localStorage.setItem('hasSeenAdNotice', 'true');
+}
+</script>
+<!-- Attention / Ad Notice Modal -->
+<div id="adNoticeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+  <div class="relative w-full max-w-md bg-[#0f0e17] border border-purple-500/20 rounded-2xl p-6 shadow-2xl text-center text-white">
+    
+    <!-- Close Icon (Top Right) -->
+    <button onclick="closeNoticeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl transition-colors">
+      &times;
+    </button>
+
+    <!-- Header Icon -->
+    <div class="w-14 h-14 mx-auto mb-4 bg-purple-950/60 border border-purple-500/30 rounded-full flex items-center justify-center text-2xl">
+      ⚠️
+    </div>
+
+    <!-- Title -->
+    <h3 class="text-xl font-bold mb-2 tracking-wide uppercase text-purple-400">
+      Quick Notice
+    </h3>
+
+    <!-- Message Body -->
+    <p class="text-sm text-gray-300 leading-relaxed mb-4">
+      To keep this platform free, you may see occasional ad banners. Some banners may look like movie posters, so please be careful where you click!
+    </p>
+
+    <p class="text-xs text-gray-400 leading-relaxed mb-6">
+      Ads are heavily limited and won't disturb your experience. If you run into any issues, feel free to message the dev team!
+    </p>
+
+    <!-- Action Button -->
+    <button onclick="closeNoticeModal()" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg transition-all active:scale-95">
+      I Understand
+    </button>
+
+  </div>
+</div>
 </body>
 </html>
