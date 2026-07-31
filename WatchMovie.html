@@ -1536,31 +1536,113 @@
             });
         }
     </script>
-    <!-- 🛡️ MOVIE PLAYER SANDBOX -->
+    <!-- 🛡️ ADVANCED MOVIE PLAYER SANDBOX – prevents top-level redirects & popups -->
 <script>
 (function() {
     'use strict';
-    const SANDBOX_VALUE = 'allow-scripts allow-same-origin allow-forms allow-presentation';
+    const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-presentation';
+    // NO allow-top-navigation, NO allow-popups → blocks redirects & window.open
+
+    // Utility: pre‑sandbox an iframe before it even touches the DOM
     function sandboxIframe(iframe) {
-        if (iframe && iframe.tagName === 'IFRAME') {
-            const container = iframe.closest('.video-container');
-            if (container) {
-                if (iframe.getAttribute('sandbox') !== SANDBOX_VALUE) {
-                    iframe.setAttribute('sandbox', SANDBOX_VALUE);
+        if (iframe && iframe.tagName === 'IFRAME' && iframe.getAttribute('sandbox') !== SANDBOX) {
+            iframe.setAttribute('sandbox', SANDBOX);
+        }
+    }
+
+    // ----- Patch DOM insertion methods for .video-container elements -----
+    function patchContainer(container) {
+        if (!container || container._mltnPatched) return;
+        container._mltnPatched = true;
+
+        // Override appendChild
+        const origAppend = container.appendChild;
+        container.appendChild = function(child) {
+            if (child.tagName === 'IFRAME') sandboxIframe(child);
+            // also scan for nested iframes (e.g., inside a fragment)
+            if (child.querySelectorAll) {
+                child.querySelectorAll('iframe').forEach(sandboxIframe);
+            }
+            return origAppend.call(this, child);
+        };
+
+        // Override insertBefore
+        const origInsertBefore = container.insertBefore;
+        container.insertBefore = function(newNode, refNode) {
+            if (newNode.tagName === 'IFRAME') sandboxIframe(newNode);
+            if (newNode.querySelectorAll) {
+                newNode.querySelectorAll('iframe').forEach(sandboxIframe);
+            }
+            return origInsertBefore.call(this, newNode, refNode);
+        };
+
+        // Override replaceChild
+        const origReplaceChild = container.replaceChild;
+        container.replaceChild = function(newChild, oldChild) {
+            if (newChild.tagName === 'IFRAME') sandboxIframe(newChild);
+            if (newChild.querySelectorAll) {
+                newChild.querySelectorAll('iframe').forEach(sandboxIframe);
+            }
+            return origReplaceChild.call(this, newChild, oldChild);
+        };
+
+        // Override innerHTML setter – intercept string HTML before it parses
+        const desc = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+        if (desc && desc.set) {
+            const origSet = desc.set;
+            Object.defineProperty(container, 'innerHTML', {
+                set: function(htmlString) {
+                    // Create a temporary element to modify the HTML string
+                    const temp = document.createElement('div');
+                    temp.innerHTML = htmlString;
+                    temp.querySelectorAll('iframe').forEach(sandboxIframe);
+                    // Call original setter with the modified element’s innerHTML
+                    origSet.call(this, temp.innerHTML);
+                },
+                get: function() { return desc.get.call(this); },
+                configurable: true
+            });
+        }
+    }
+
+    // ----- Watch for .video-container elements appearing in the DOM -----
+    const observer = new MutationObserver(mutations => {
+        for (const mut of mutations) {
+            for (const node of mut.addedNodes) {
+                if (node.nodeType !== 1) continue;
+                // The added node itself is a .video-container
+                if (node.matches && node.matches('.video-container')) {
+                    patchContainer(node);
+                }
+                // Or it contains one (e.g., a whole section injected via innerHTML)
+                if (node.querySelectorAll) {
+                    node.querySelectorAll('.video-container').forEach(patchContainer);
                 }
             }
         }
-    }
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            mutation.addedNodes.forEach((node) => {
-                if (node.nodeType === 1 && node.tagName === 'IFRAME') sandboxIframe(node);
-                if (node.querySelectorAll) node.querySelectorAll('iframe').forEach(sandboxIframe);
-            });
-        });
     });
+
     observer.observe(document.documentElement, { childList: true, subtree: true });
-    document.querySelectorAll('.video-container iframe').forEach(sandboxIframe);
+
+    // Also patch any .video-container that already exists (rare, but safe)
+    document.querySelectorAll('.video-container').forEach(patchContainer);
+
+    // ----- Fallback: also sandbox any iframe inside .video-container at runtime -----
+    const iframeObserver = new MutationObserver(mutations => {
+        for (const mut of mutations) {
+            for (const node of mut.addedNodes) {
+                if (node.nodeType === 1 && node.tagName === 'IFRAME') {
+                    if (node.closest('.video-container')) sandboxIframe(node);
+                }
+                if (node.querySelectorAll) {
+                    node.querySelectorAll('iframe').forEach(iframe => {
+                        if (iframe.closest('.video-container')) sandboxIframe(iframe);
+                    });
+                }
+            }
+        }
+    });
+    iframeObserver.observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
 </body>
