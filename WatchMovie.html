@@ -1536,5 +1536,32 @@
             });
         }
     </script>
+    <!-- 🛡️ MOVIE PLAYER SANDBOX -->
+<script>
+(function() {
+    'use strict';
+    const SANDBOX_VALUE = 'allow-scripts allow-same-origin allow-forms allow-presentation';
+    function sandboxIframe(iframe) {
+        if (iframe && iframe.tagName === 'IFRAME') {
+            const container = iframe.closest('.video-container');
+            if (container) {
+                if (iframe.getAttribute('sandbox') !== SANDBOX_VALUE) {
+                    iframe.setAttribute('sandbox', SANDBOX_VALUE);
+                }
+            }
+        }
+    }
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1 && node.tagName === 'IFRAME') sandboxIframe(node);
+                if (node.querySelectorAll) node.querySelectorAll('iframe').forEach(sandboxIframe);
+            });
+        });
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    document.querySelectorAll('.video-container iframe').forEach(sandboxIframe);
+})();
+</script>
 </body>
 </html>
