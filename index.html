@@ -453,7 +453,7 @@
         }
     </style>
 
-    <!-- ================= CINEMATIC INTRO REFRESH (loadingScreen visuals only — #loadingScreen, #animeLogoBox and the heartbeat/shake/zoom classes the JS relies on are untouched) ================= -->
+    <!-- ================= CINEMATIC INTRO REFRESH ================= -->
     <style id="intro-refresh">
         #loadingScreen {
             background: radial-gradient(120% 120% at 50% 60%, #0a0612 0%, #000000 70%);
@@ -600,7 +600,7 @@
         }
     </style>
 
-    <!-- ================= VISUAL REFRESH (styling only — no ids, classes, or scripts touched) ================= -->
+    <!-- ================= VISUAL REFRESH ================= -->
     <style id="visual-refresh">
         :root {
             --accent-ember: #F5A742;
@@ -619,7 +619,6 @@
             letter-spacing: 0.015em;
         }
 
-        /* Navbar: richer glass + soft violet edge */
         .navbar-glass {
             background: linear-gradient(180deg, rgba(8,6,16,0.88), rgba(8,6,16,0.5)) !important;
             backdrop-filter: blur(18px) saturate(160%) !important;
@@ -632,7 +631,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* Hero title: subtle gradient text instead of flat white */
         #hero-title {
             background: linear-gradient(115deg, #ffffff 0%, #e4d6ff 45%, #a78bfa 100%);
             -webkit-background-clip: text;
@@ -640,7 +638,6 @@
             color: transparent;
         }
 
-        /* Ambient signature glow behind the hero — pure CSS, no extra markup */
         .backdrop-container {
             position: relative;
         }
@@ -653,7 +650,6 @@
             z-index: 1;
         }
 
-        /* Buttons: slightly more tactile */
         .netflix-button {
             border-radius: 6px;
             letter-spacing: 0.01em;
@@ -663,7 +659,6 @@
         #hero-info-btn:hover { transform: translateY(-2px); }
         #modalPlayBtn:hover, #modalAddToListBtn:hover { transform: translateY(-2px); }
 
-        /* Cards: soft violet edge + lift on hover, layered on your existing rule */
         .movie-card, .series-card, .anime-card {
             border-radius: 8px;
             overflow: hidden;
@@ -676,13 +671,10 @@
             transform: translateY(-4px) scale(1.015);
         }
 
-        /* Section icons: faint glow to tie to the accent */
         section h2 i { filter: drop-shadow(0 0 6px rgba(124,58,237,0.45)); }
 
-        /* Footer: quiet divider */
         footer { border-top: 1px solid rgba(255,255,255,0.06); }
 
-        /* Auth modal: richer surface + accent submit button */
         #authModal .bg-neutral-900 {
             background: linear-gradient(160deg, rgba(20,16,30,0.98), rgba(8,6,12,0.98)) !important;
             border: 1px solid var(--glass-border) !important;
@@ -695,13 +687,11 @@
         }
         #authSubmitBtn:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(124,58,237,0.45); }
 
-        /* Keyboard accessibility */
         a:focus-visible, button:focus-visible, input:focus-visible {
             outline: 2px solid var(--accent-ember);
             outline-offset: 2px;
         }
 
-        /* Respect reduced-motion preference for the decorative animations */
         @media (prefers-reduced-motion: reduce) {
             .animate-heartbeat, .animate-shake, .animate-zoom, .scratch-line,
             .smooth-text-glow, .smooth-logo-glow {
@@ -1946,9 +1936,11 @@
         // Animation timeline
         setTimeout(() => {
             // Show logo with scale animation
-            logoContainer.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-            logoContainer.style.opacity = '1';
-            logoContainer.style.transform = 'scale(1)';
+            if (logoContainer) {
+                logoContainer.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                logoContainer.style.opacity = '1';
+                logoContainer.style.transform = 'scale(1)';
+            }
             
             // Add logo particle effects
             setTimeout(() => {
@@ -1958,24 +1950,28 @@
         
         setTimeout(() => {
             // Show typing container
-            typingContainer.style.transition = 'opacity 0.5s ease-in-out';
-            typingContainer.style.opacity = '1';
+            if (typingContainer) {
+                typingContainer.style.transition = 'opacity 0.5s ease-in-out';
+                typingContainer.style.opacity = '1';
+            }
             
             // Start typing animation - clean professional typing
-            var typed = new Typed('#typedText', {
-                strings: ['<span class="text-netflix-red">MLTN</span> <span class="text-white">VAULT</span>'],
-                typeSpeed: 30,
-                backSpeed: 0,
-                fadeOut: false,
-                loop: false,
-                showCursor: true,
-                cursorChar: '|',
-                onComplete: function() {
-                    // Hide cursor and add professional light explosion effect
-                    document.querySelector('.typed-cursor').style.display = 'none';
-                    addProfessionalSparkleEffect();
-                }
-            });
+            if (document.getElementById('typedText')) {
+                var typed = new Typed('#typedText', {
+                    strings: ['<span class="text-netflix-red">MLTN</span> <span class="text-white">VAULT</span>'],
+                    typeSpeed: 30,
+                    backSpeed: 0,
+                    fadeOut: false,
+                    loop: false,
+                    showCursor: true,
+                    cursorChar: '|',
+                    onComplete: function() {
+                        // Hide cursor and add professional light explosion effect
+                        document.querySelector('.typed-cursor').style.display = 'none';
+                        addProfessionalSparkleEffect();
+                    }
+                });
+            }
         }, 1200);
         
         // Hide loading screen and show main content after 5 seconds
@@ -2006,6 +2002,7 @@
     function addProfessionalSparkleEffect() {
         const container = document.getElementById('typingContainer');
         const textElement = document.getElementById('typedText');
+        if (!container || !textElement) return;
         
         // Add smooth glow animation class
         textElement.classList.add('smooth-text-glow');
@@ -2190,7 +2187,9 @@
     // Logo particle effects and light shadow
     function addLogoParticleEffect() {
         const logoContainer = document.getElementById('logoContainer');
+        if (!logoContainer) return;
         const logoImg = logoContainer.querySelector('img');
+        if (!logoImg) return;
         
         // Make logo container relative for better particle positioning
         logoContainer.style.position = 'relative';
@@ -2349,7 +2348,7 @@
     function switchAuthMode() {
         isSignUp = !isSignUp;
         
-        const modalTitle = document.getElementById('modalTitle');
+        const modalTitle = document.getElementById('authModalTitle');
         const submitBtn = document.getElementById('authSubmitBtn');
         const toggleText = document.getElementById('toggleAuthText');
         const toggleBtn = document.getElementById('toggleAuthBtn');
@@ -2541,7 +2540,7 @@ function handleLogout() {
         <!-- Close Button -->
         <button type="button" onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
         
-        <h2 id="modalTitle" class="text-2xl font-bold mb-1 text-white">Sign In to MLTN VAULT</h2>
+        <h2 id="authModalTitle" class="text-2xl font-bold mb-1 text-white">Sign In to MLTN VAULT</h2>
         <p id="modalSubtext" class="text-gray-400 text-sm mb-5">You must be logged in to watch movies.</p>
         
         <!-- General Alert Message (Hidden by default) -->
@@ -2638,7 +2637,9 @@ function handleLogout() {
             markSupportModalSeen();
             const modal = document.getElementById('supportAdModal');
             if (modal) modal.classList.add('hidden');
-            window.open(SMART_LINK, '_blank', 'noopener');
+            // Use the real browser window.open reference so this can never be
+            // silently swallowed by any later override elsewhere on the page.
+            realWindowOpen.call(window, SMART_LINK, '_blank', 'noopener');
         };
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -2772,14 +2773,15 @@ window.db = db;
 </script>
 <!-- Anime Intro Animation Trigger -->
     <script>
+        // Save the real window.open BEFORE anything below gets a chance to
+        // replace it, so ad links and the footer social buttons keep working
+        // no matter what runs later on the page.
+        const realWindowOpen = window.open.bind(window);
+
         window.addEventListener('DOMContentLoaded', () => {
             const logoBox = document.getElementById('animeLogoBox');
             const loadingScreen = document.getElementById('loadingScreen');
-  // Override window.open to block mid-movie ad popups
-window.open = function() {
-  console.log("Blocked an automatic ad popup!");
-  return null;
-};
+
             if (logoBox && loadingScreen) {
                 // Phase 1: Heartbeat runs automatically on load...
 
