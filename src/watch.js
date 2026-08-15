@@ -174,7 +174,7 @@ async function WatchMovie(movieId) {
             <div class="video-sidebar-layout movie-content-wrapper">
                 <div class="video-section">
                     <div class="video-container">
-                        <iframe id="video-player" src="${embedUrl}" allowfullscreen></iframe>
+                       <iframe id="video-player" src="${embedUrl}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-pointer-lock"></iframe>
                     </div>
                     
                     <div class="server-selection">
@@ -382,7 +382,7 @@ async function WatchTV(seriesId) {
             <div class="video-sidebar-layout">
                 <div class="video-section">
                     <div class="video-container" id="video-container" style="display: none;">
-                        <iframe id="video-player" allowfullscreen></iframe>
+                        <iframe id="video-player" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-pointer-lock"></iframe>
                     </div>
 
                     <div class="server-selection" id="server-selection" style="display: none;">
